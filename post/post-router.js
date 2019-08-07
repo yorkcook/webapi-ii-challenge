@@ -69,7 +69,7 @@ router.put("/api/post/:id", (req, res) => {
   }
 });
 
-router.delete("api/post/:id", (req, res) => {
+router.delete("/api/post/:id", (req, res) => {
   const id = req.params.id;
   let oldPost = {};
   Info.findById(id).then(post => (oldPost = post[0]));
@@ -84,6 +84,49 @@ router.delete("api/post/:id", (req, res) => {
       });
   } else {
     res.status(404).json({ message: "No post exists with that id" });
+  }
+});
+
+router.get("/api/posts/:id/comment", (req, res) => {
+  const id = req.params.id;
+
+  if (id) {
+    Info.findPostComments(id)
+      .then(comment => {
+        res.status(200).json(comment);
+      })
+      .catch(error => {
+        res
+          .status(500)
+          .json({ message: "An error occured when retrieving the comment." });
+      });
+  } else {
+    res.status(404).json({ message: "No post exists with that id." });
+  }
+});
+
+router.post("/api/posts/:id/comments", (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+
+  if (id) {
+    if (body.text) {
+      Info.insertComment(body)
+        .then(comment => {
+          res.status(200).json(body);
+        })
+        .catch(error => {
+          res
+            .status(500)
+            .json({ message: "An error occured while saving the comment." });
+        });
+    } else {
+      res
+        .status(400)
+        .json({ message: "Please provide a message for the comment." });
+    }
+  } else {
+    res.status(404).json({ message: "No post exists with that id." });
   }
 });
 
