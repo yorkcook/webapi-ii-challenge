@@ -8,6 +8,6 @@ server.use(express.json());
 
 server.use("/api/posts", postRouter);
 
-server.listen(6000, () => {
+server.listen(5005, () => {
   console.log("Server reporting for duty from port 6000!!");
 });
